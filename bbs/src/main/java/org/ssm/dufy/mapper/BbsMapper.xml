@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ssm.dufy.dao.BbsDao" >
+
+    <resultMap  type="bbs" id="bbsMap">
+        <id column="XH" jdbcType="VARCHAR" property="xh"/>
+        <result column="TITLE" jdbcType="VARCHAR"  property="title"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+        <result column="CREATED" jdbcType="DATE" property="created"/>
+        <result column="AUTHOR_ID" jdbcType="VARCHAR" property="author_id"/>
+        <result column="IMAGE_URL" jdbcType="VARCHAR" property="image_url"/>
+        <result column="IS_PARENT" jdbcType="VARCHAR" property="is_parent"/>
+        <result column="PARENT_XH" jdbcType="VARCHAR" property="parent_xh"/>
+        <result column="COMMENT_TIME" jdbcType="DATE" property="comment_time"/>
+        <result column="THUMBS_UP" jdbcType="INTEGER" property="thumbs_up"/>
+        <result column="ABOUT_XH"  jdbcType="VARCHAR" property="about_xh"/>
+        <result column="YXX" jdbcType="VARCHAR" property="yxx"/>
+      	<association property="user" javaType="User" column="AUTHOR_ID" select="getUser">
+      	</association>
+      	<association property="about" javaType="About" column="ABOUT_XH" select="getAbout">
+      	</association>
+    </resultMap>
+    
+    <sql id="columns">
+       XH,
+       TITLE,
+       CONTENT,
+       CREATED,
+       YXX,
+       AUTHOR_ID,
+       IMAGE_URL,
+       IS_PARENT,
+       THUMBS_UP,
+       ABOUT_XH,
+       PARENT_XH,
+       COMMENT_TIME
+    </sql>
+    
+  	<sql id="queryByParam">
+  		<if test="xh !=null">
+  			AND xh=#{xh,jdbcType=VARCHAR}
+  		</if>
+  		<if test="title !=null">
+  			AND title=#{title,jdbcType=VARCHAR}
+  		</if>
+  		<if test="content !=null">
+  			AND content=#{content,jdbcType=VARCHAR}
+  		</if>
+  		<if test="created !=null">
+  			AND created=#{created,jdbcType=DATE}
+  		</if>
+  		<if test="yxx !=null">
+  			AND yxx=#{yxx,jdbcType=VARCHAR}
+  		</if>
+  		<if test="author_id !=null">
+  			AND author_id=#{author_id,jdbcType=VARCHAR}
+  		</if>
+  		<if test="image_url !=null">
+  			AND image_url=#{image_url,jdbcType=VARCHAR}
+  		</if>
+  		<if test="is_parent !=null">
+  			AND is_parent=#{is_parent,jdbcType=VARCHAR}
+  		</if>
+  		<if test="parent_xh !=null">
+  			AND parent_xh=#{parent_xh,jdbcType=VARCHAR}
+  		</if>
+  		<if test="comment_time !=null">
+  			AND  comment_time=#{comment_time,jdbcType=DATE}
+  		</if>
+  		<if test="thumbs_up !=null">
+  			AND  thumbs_up =#{thumbs_up,jdbcType=INTEGER}
+  		</if>
+  		<if test="about_xh !=null">
+  			AND  about_xh=#{about_xh,jdbcType=VARCHAR}
+  		</if>
+  	</sql>  
+  	
+  	<insert id="addBBSContent" parameterType="java.util.Map">
+  		INSERT INTO TB_BBS 
+  		<trim prefix="(" suffix=")" suffixOverrides=",">
+  			<if test="xh !=null">
+  				XH,
+  			</if>
+  			<if test="title !=null">
+  				TITLE,
+  			</if>
+  			<if test="content !=null">
+  				CONTENT,
+  			</if>
+  			<if test="created !=null">
+  				CREATED,
+  			</if>
+  			<if test="yxx !=null">
+  				YXX,
+  			</if>
+  			<if test="author_id !=null">
+  				AUTHOR_ID,
+  			</if>
+  			<if test="image_url !=null">
+  				IMAGE_URL,
+  			</if>
+  			<if test="is_parent !=null">
+  				IS_PARENT,
+  			</if>
+  			<if test="parent_xh !=null">
+  				PARENT_XH,
+  			</if>
+  			<if test="comment_time !=null">
+  				COMMENT_TIME,
+  			</if>
+  			<if test="thumbs_up !=null">
+  				THUMBS_UP,
+  			</if>
+  			<if test="about_xh !=null">
+  				ABOUT_XH,
+  			</if>
+  	    </trim>
+  		<trim prefix="values(" suffix=")" suffixOverrides=",">
+  			<if test="xh !=null">
+  				#{xh,jdbcType=VARCHAR},
+  			</if>
+  			<if test="title !=null">
+  				#{title,jdbcType=VARCHAR},
+  			</if>
+  			<if test="content !=null">
+  				#{content,jdbcType=VARCHAR},
+  			</if>
+  			<if test="created !=null">
+  				#{created,jdbcType=DATE},
+  			</if>
+  			<if test="yxx !=null">
+  				#{yxx,jdbcType=VARCHAR},
+  			</if>
+  			<if test="author_id !=null">
+  				#{author_id,jdbcType=VARCHAR},
+  			</if>
+  			<if test="image_url !=null">
+  				#{image_url,jdbcType=VARCHAR},
+  			</if>
+  			<if test="is_parent !=null">
+  				#{is_parent,jdbcType=VARCHAR},
+  			</if>
+  			<if test="parent_xh !=null">
+  				#{parent_xh,jdbcType=VARCHAR},
+  			</if>
+  			<if test="comment_time !=null">
+  				#{comment_time,jdbcType=DATE},
+  			</if>
+  			<if test="thumbs_up !=null">
+  				#{thumbs_up,jdbcType=INTEGER},
+  			</if>
+  			<if test="about_xh !=null">
+  				#{about_xh,jdbcType=VARCHAR},
+  			</if>
+  		</trim>
+  	</insert>
+  	
+  	<select id="queryContentByParam" parameterType="java.util.Map" resultMap="bbsMap">
+  		SELECT <include refid="columns"/> FROM TB_BBS
+  		<where>
+  			<include refid="queryByParam"/>
+  		</where>
+  		ORDER BY CREATED DESC 
+  	</select>
+  	
+  	<select id="queryPagingContentByParam" parameterType="java.util.Map" resultMap="bbsMap">
+  		SELECT <include refid="columns"/> FROM TB_BBS
+  		<where>
+  			<include refid="queryByParam"/>
+  		</where>
+  		ORDER BY CREATED DESC 
+  		LIMIT #{startlimit,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+  	</select>
+  	
+  	<!-- ============================== -->
+  	<select id="queryCommentByParam" parameterType="java.util.Map" resultMap="bbsMap">
+  		SELECT <include refid="columns"/> FROM TB_BBS
+  		<where>
+  			<include refid="queryByParam"/>
+  		</where>
+  	</select>
+  	<!-- ============================== -->
+  	
+  	
+  	<select id="getUser" resultType="User" parameterType="int">
+  		SELECT  username FROM TB_USER WHERE ID=#{author_id}
+  	</select>
+  	<select id="getAbout" resultType="About" parameterType="string">
+  		SELECT xh,jf,start,published_num FROM TB_ABOUT WHERE xh=#{about_xh}
+  	</select>
+  	
+  	<delete id="removeBbsContent" parameterType="java.util.Map">
+  		DELETE FROM TB_BBS 
+  		WHERE xh=#{xh,jdbcType=VARCHAR}
+  	</delete>
+  
+  	<select id="queryBbsCount" parameterType="java.util.Map" resultType="int">
+  		SELECT COUNT(*) FROM TB_BBS
+  		<where>
+  			<include refid="queryByParam"/>
+  		</where>
+  	</select>
+  	
+  	<select id="queryOwnBbsCount" resultType="int">
+  		SELECT COUNT(*) FROM TB_BBS
+  		<where>
+  			1=1
+  			<include refid="queryByParam"/>
+  		</where>
+  	</select>
+  	
+  	<update id="updateBbbsByParam" parameterType="java.util.Map">
+  		UPDATE TB_BBS 
+  		<set>
+  			<if test="title !=null">
+  				title=#{title,jdbcType=VARCHAR},		
+  			</if>
+  			<if test="content !=null">
+  				content=#{content,jdbcType=VARCHAR},
+  			</if>
+  			<if test="created !=null">
+  				created=#{created,jdbcType=DATE},
+  			</if>
+  		</set>
+  		WHERE XH=#{xh,jdbcType=VARCHAR}
+  	</update>
+  	
+</mapper>

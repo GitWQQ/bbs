@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.RoleMapper">
+	<resultMap type="Role" id="roleMap">
+		<id column="ID" jdbcType="VARCHAR" property="id"/>
+		<result column="ROLENAME" jdbcType="VARCHAR" property="roleName"/>
+	</resultMap>
+	<sql id="columns">
+		ID,ROLENAME
+	</sql>
+	
+	<select id="getRoleByParam" parameterType="java.util.Map" resultMap="roleMap">
+		SELECT
+			r.ROLENAME
+		FROM
+			TB_ROLE r,
+			TB_USER u,
+			TB_USER_ROLE ur
+		WHERE
+			r.id = ur.rid
+			AND u.id = ur.uid
+			AND u.id = ur.uid
+			AND u.username = #{username,jdbcType=VARCHAR}
+	</select>
+	
+	<select id="getRoles" parameterType="java.util.Map" resultMap="roleMap">
+		SELECT <include refid="columns"/> FROM TB_ROLE
+	</select>
+	
+</mapper>

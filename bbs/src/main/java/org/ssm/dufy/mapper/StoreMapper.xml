@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ssm.dufy.dao.StoreDao" >
+    <resultMap  type="Store" id="storeMap">
+        <id column="XH" jdbcType="VARCHAR" property="xh"/>
+        <result column="BBS_XH" jdbcType="VARCHAR"  property="bbs_xh"/>
+        <result column="RY_XH" jdbcType="VARCHAR" property="ry_xh" />
+        <result column="CREATED" jdbcType="DATE" property="created"/>
+    </resultMap>
+    
+    <sql id="columns">
+    	XH,
+    	BBS_XH,
+    	RY_XH,
+    	CREATED
+    </sql>
+    
+    <sql id="queryParam">
+    	<if test="xh !=null">
+    		AND XH=#{xh,jdbcType=VARCHAR}
+    	</if>
+    	<if test="bbs_xh !=null">
+    		AND BBS_XH=#{bbs_xh,jdbcType=VARCHAR}
+    	</if>
+    	<if test="ry_xh !=null">
+    		AND RY_XH=#{ry_xh,jdbcType=VARCHAR}
+    	</if>
+    	<if test="created !=null">
+    		AND CREATED=#{created,jdbcType=DATE}
+    	</if>
+    </sql>
+    
+    <insert id="storeBbs" parameterType="java.util.Map">
+    	INSERT INTO TB_STORE
+    	<trim prefix="(" suffix=")" suffixOverrides=",">
+    		<if test="xh !=null and xh !=''">
+    			XH,
+    		</if>
+    		<if test="bbs_xh !=null and bbs_xh !=''">
+    			BBS_XH,
+    		</if>
+    		<if test="ry_xh !=null and ry_xh !=''">
+    			RY_XH,
+    		</if>
+    		<if test="created !=null and created !=''">
+    			CREATED,
+    		</if>
+    	</trim> 
+    	<trim prefix="values(" suffix=")" suffixOverrides=",">
+    		<if test="xh !=null and xh !=''">
+    			#{xh,jdbcType=VARCHAR},
+    		</if>
+    		<if test="bbs_xh !=null and bbs_xh !=''">
+    			#{bbs_xh,jdbcType=VARCHAR},
+    		</if>
+    		<if test="ry_xh !=null and ry_xh !=''">
+    			#{ry_xh,jdbcType=VARCHAR},
+    		</if>
+    		<if test="created !=null">
+    			#{created,jdbcType=DATE},
+    		</if>
+    	</trim>
+    </insert>
+    
+    <select id="getStoreByParam" parameterType="java.util.Map" resultMap="storeMap">
+    	SELECT <include refid="columns"/> FROM TB_STORE
+    	WHERE
+    	BBS_XH=#{bbs_xh,jdbcType=VARCHAR}
+    	AND RY_XH=#{ry_xh,jdbcType=VARCHAR}
+    </select>
+    
+    <delete id="removeStoreBbs" parameterType="java.util.Map">
+  		DELETE FROM TB_STORE 
+  		WHERE 
+  		bbs_xh=#{bbs_xh,jdbcType=VARCHAR} AND
+  		ry_xh=#{ry_xh,jdbcType=VARCHAR}
+  	</delete>
+  	
+    
+</mapper>

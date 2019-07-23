@@ -1,0 +1,52 @@
+Jakarta POI 是一套用于访问微软格式文档的Java API
+Jakarta POI有很多组件组成，其中有用于操作Excel格式的文件HSSF
+和用于操作Word的HWPF 
+
+Jakarta POI HSSF API组件
+HSSF(用于操作Excel的组件),提供给用户使用的对象在rg.apache.poi.hssf.user,odel
+包中，主要部分包括Excel对象，样式，格式，还有辅助操作，
+常用的组件：
+	HSSFWorkbook           excel的文档对象
+	HSSFSheet			   excel的表单
+	HSSFRow                excel的行
+	HSSFCell               excel的格子单元
+	HSSFFont               excel的字体
+	HSSFDataFormat         日期格式
+	HSSFHeader             Sheet头
+	HSSFFooter             Sheet尾（打印时候才能看到效果）
+样式：
+	HSSFCellStyle          cell样式
+	
+辅助操作包括：
+	HSSFDateUtil           日期
+	HSSFPrintSetup         打印
+	HSSFErrorConstants     错误信息表
+	
+	
+基本操作步骤：
+	Excel的组织形式：
+		一个Excel文件对应一个WorkBook(HSSFWorkbook),
+		一个workbook可以有多个Sheet(HSSFSheet)组成，
+		一个Sheet由多个row(HSSFRow)组成
+		一个row由多个cell(HSSFCell)组成
+		
+    ① 用HSSFWorkbook打开或者创建Excel文件对象
+    ②  用HSSFWorkbook对象返回或创建Sheet对象
+    ③  用Sheet对象返回行对象，用行对象得到Cell对象
+    ④ 对Cell对象读写操作
+  
+  示例：
+  	//创建HSSFWorkbook对象
+  	HSSFWorkbook wb=new HSSFWorkbook;
+  	//创建HSSFSheet对象
+  	HSSFSheet sheet=wb.createSheet("SHeet");
+  	//创建HSSFRow对象
+  	HSSFRow row=sheet.createRow(0);
+ 	//创建HSSFCell对象
+ 	HSSFCell cell=row.createCell(0);
+ 	//设置单元格的值
+ 	cell.setCellValue("单元格中的文件");
+ 	//输出Excel文件
+ 	FileOutputStream output=new FileOutputStream("D:\\");
+ 	
+  		

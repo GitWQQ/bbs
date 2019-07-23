@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ssm.dufy.dao.AboutDao" >
+    <resultMap  type="About" id="aboutMap">
+        <id column="XH" jdbcType="VARCHAR" property="xh"/>
+        <result column="JF" jdbcType="INTEGER"  property="jf"/>
+        <result column="START" jdbcType="VARCHAR" property="start" />
+        <result column="PUBLISHED_NUM" jdbcType="INTEGER" property="published_num"/>
+    </resultMap>
+    
+    <sql id="columns">
+    	XH,JF,START,PUBLISHED_NUM
+    </sql>
+	
+	<insert id="addAbout" parameterType="java.util.Map">
+		INSERT INTO TB_ABOUT
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+			<if test="xh !=null AND xh !=''">
+				XH,
+			</if>
+			<if test="JF !=null AND JF !=''">
+				JF,
+			</if>
+			<if test="start !=null AND start !=''">
+				START,
+			</if>
+			<if test="published_num !=null and published_num!=''">
+				PUBLISHED_NUM,
+			</if>
+		</trim>
+		<trim prefix="values(" suffix=")" suffixOverrides=",">
+			<if test="xh !=null and xh !=''">
+				#{xh,jdbcType=VARCHAR},
+			</if>
+			<if test="jf !=null and jf !=''">
+				#{jf,jdbcType=INTEGER},
+			</if>
+			<if test="start !=null and start !=''">
+				#{start,jdbcType=VARCHAR},
+			</if>
+			<if test="published_num !=null and published_num !=''">
+				#{published_num,jdbcType=INTEGER},
+			</if>
+		</trim>
+	</insert>
+	
+	<update id="updatePublishNUM" parameterType="java.util.Map">
+		UPDATE TB_ABOUT 
+		SET
+			published_num=published_num+1,
+			jf=jf+#{jf,jdbcType=VARCHAR}
+		WHERE
+		xh=#{xh,jdbcType=VARCHAR}
+	</update>
+	
+	<select id="queryAboutByXh" parameterType="java.util.Map" resultType="About">
+		SELECT <include refid="columns"/> FROM TB_ABOUT
+		<where>
+			1=1
+			<if test="xh !=null">
+			  AND xh=#{xh,jdbcType=VARCHAR}
+			</if>
+		</where>
+	</select> 	   
+</mapper>

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="org.ssm.dufy.dao.UserMapper">
+	<resultMap type="User" id="userMap">
+		<id column="ID" jdbcType="VARCHAR" property="id"/>
+		<result column="USERNAME" jdbcType="VARCHAR" property="username"/>
+		<result column="SEX" jdbcType="VARCHAR" property="sex"/>
+		<result column="PASSWORD" jdbcType="VARCHAR" property="password"/>
+		<result column="PHONE" jdbcType="VARCHAR" property="phone"/>
+		<result column="EMAIL" jdbcType="VARCHAR" property="email"/>
+		<result column="SALT" jdbcType="VARCHAR" property="salt"/>
+		<result column="CREATED" jdbcType="DATE" property="created"/>
+		<result column="UPDATED" jdbcType="DATE" property="updated"/>
+		<result column="ABOUT_XH" jdbcType="VARCHAR" property="about_xh"/>
+	</resultMap>
+	
+	<sql id="columns">
+		ID,
+		USERNAME,
+		SEX,
+		PASSWORD,
+		PHONE,
+		EMAIL,
+		SALT,
+		CREATED,
+		UPDATED,
+		ABOUT_XH
+	</sql>	
+	
+	<sql id="queryByParam">
+		<if test="id !=null and id !=''">
+			id=#{id,jdbcType=VARCHAR}
+		</if>
+		<if test="username !=null and username !=''">
+			username=#{username,jdbcType=VARCHAR}
+		</if>
+		<if test="sex !=null and sex !=''">
+			sex=#{sex,jdbcType=VARCHAR}
+		</if>
+		<if test="password !=null and password !=''">
+			password=#{password,jdbcType=VARCHAR}
+		</if>
+		<if test="phone !=null">
+			phone =#{phone,jdbcType=VARCHAR}
+		</if>
+		<if test="email !=null">
+			email=#{email,jdbcType=VARCHAR}
+		</if>
+		<if test="created !=null">
+			created=#{created,jdbcType=DATE}
+		</if>
+		<if test="updated !=null">
+			updated=#{updated,jdbcType=DATE}
+		</if>
+		<if test="about_xh !=null">
+			about_xh=#{about_xh,jdbcType=VARCHAR}
+		</if>
+	</sql>
+	
+	<select id="getUserByParam" parameterType="java.util.Map" resultMap="userMap">
+		SELECT <include refid="columns"/> FROM TB_USER
+		<where>
+			<include refid="queryByParam"/>
+		</where>
+	</select>
+	
+	<select id="selectById" parameterType="String" resultType="User">
+		SELECT <include refid="columns"/> FROM TB_USER id=#{id,jdbcType=VARCHAR}
+	</select>
+	
+</mapper>
