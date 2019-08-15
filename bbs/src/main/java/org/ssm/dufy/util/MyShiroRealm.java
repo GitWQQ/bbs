@@ -76,6 +76,7 @@ public class MyShiroRealm extends AuthorizingRealm{
 		if(!"".equals(userName)){
 			Map<String,Object> param=new HashMap<String,Object>();
 			param.put("username",userName);
+			System.out.print("userName:"+userName);
 			//根据 userName查找数据记录
 			List<User> resultList=userService.getUserByParam(param);
 			if(resultList==null || resultList.size()<=0){

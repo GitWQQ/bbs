@@ -56,6 +56,26 @@ $(function(){
 			,afterBlur: function(){this.sync();}
 			
 		});
+		
+		/////////////////////
+		K.create('textarea[name="comment_content"]', {
+			items:[ 
+			      	'image','emoticons'
+           ]
+			,resizeType :2
+			,allowPreviewEmoticons : true
+			,uploadJson:ctx+'sys/fileUpload' //指定上传服务器端程序
+			,fileManagerJson:ctx+'sys/fileManager' // 指定浏览器远程图片的服务器端程序
+			,allowFileManager : true //文件管理器功能，true时显示浏览器远程服务器按钮
+			,allowImageUpload:true
+			,width:'96%'
+			,minHeight:45
+			,afterCreate : function() {
+				this.sync();
+			}
+			,afterBlur: function(){this.sync();}
+			
+		});
 	});
 });
 </script>
@@ -139,13 +159,13 @@ $(function(){
 									<tr class="tfoot">
 										<td style="vertical-align:bottom;padding-bottom:15px;">
 											<hr style="border-top:2px dotted #F8F8F8">
-											<span style="margin-left:50px;"><a href="#">回&nbsp;&nbsp;复</a></span>
-											<span style="float:right;margin-right:50px;"><a href="#">举&nbsp;&nbsp;报</a></span>
+											<span style="margin-left:50px"><a href="javascript:void(0)" onclick="document.getElementById('main_comment').scrollIntoView();">回&nbsp;&nbsp;复</a></span>
+											<span style="float:right;margin-right:50px;" onclick="juBao();"><a href="javascript:void(0);">举&nbsp;&nbsp;报</a></span>
 										</td>
 									</tr>                 
 								</table>                                                                              
 							</td>                                                                                            
-							<td style="width:15%;border:3px dotted #fff">
+							<td style="width:15%;border:3px dotted #fff;background-color:#D1EEEE">
 								<div style="width:100%;text-align:center;">
 									<c:choose>
 										<c:when test="${likeStatusCode==1}">
@@ -164,7 +184,7 @@ $(function(){
 										</c:otherwise>
 									</c:choose>
 									
-									<a id="toPl" href="javascript:void(0);returnToAnchor();">                                                  
+									<a id="toPl" href="javascript:void(0);" onclick="document.getElementById('main_comment').scrollIntoView();">                                                  
 										<span title="评论" class="glyphicon glyphicon-pencil"></span>(${bbsCount})&nbsp;&nbsp;&nbsp;
 									</a>
 									<c:choose>
@@ -212,7 +232,7 @@ $(function(){
 				<td colspan="3">                                                                                             
 					<table style="width:100%;height:100px;border-bottom:3px dotted #fff">	                                     
 						<tr> 
-							<td style="width:15%;background-color:#D1EEEE;border:3px dotted #fff">
+							<td style="width:15%;background-color:#D1EEEE;">
 								<div style="width:100%;margin-top:5px;margin-bottom:30px;">                                                                                    
 									<table  style="width:80%;font-size:14px;font-weight:bold;text-align:center;" align="center">                            
 										<tr>
@@ -242,7 +262,7 @@ $(function(){
 									</table>
 								</div>                                                                                  
 							</td>                                                                                       
-							<td style="width:70%;border:3px dotted #fff">
+							<td style="width:70%;">
 								<table style="margin-bottom:10px;width:100%;height:100%">                                                                                  
 									<tr>                                      
 										<td>                                                                                 
@@ -256,27 +276,49 @@ $(function(){
 									<tr class="tfoot">
 										<td style="vertical-align:bottom;padding-bottom:15px;">
 											<hr style="border-top:1px dashed #F8F8F8;">
-											<span style="margin-left:50px;"><a href="#">回&nbsp;&nbsp;复</a></span>
-											<span style="float:right;margin-right:50px;"><a href="#">举&nbsp;&nbsp;报</a></span>
+											<span id="answer${status.count}" onclick="answer(${status.count});" style="margin-left:50px;">
+												<a href="javascript:void(0);">回&nbsp;复</a>
+											</span>
+											<span id="cancel_answer${status.count}" onclick="cancel_answer(${status.count});" style="margin-left:50px;display:none">
+												<a href="javascript:void(0);">收起回复</a>
+											</span>
+											<span style="float:right;margin-right:50px;"><a href="javascript:void(0);">举&nbsp;&nbsp;报</a></span>
 										</td>
 									</tr>                                                                                         
 								</table>                                                                                    
 							</td>                                                                                            
-							<td style="width:15%;border:3px dotted #fff">
+							<td style="width:15%;background-color:#D1EEEE">
 								<div style="width:100%;text-align:center;">
 									<a id="thumbUp2" href="javascript:void(0);" onclick="thumbUp2()">
 										<span title="点赞" class="glyphicon glyphicon-thumbs-up"></span>                                              
 										<span>(99+)</span>&nbsp;&nbsp;&nbsp;
 									</a>
-									
 									<c:if test="${comment.user.username==currUser}">
-										<a id="toRemove" href="javascript:void(0);">                                                  
-											<span title="删除" class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;&nbsp;
+										<a id="toRemove"  href="javascript:void(0);">                                                  
+											<span title="删除" onclick="remove_comment('${comment.xh}')" class="glyphicon glyphicon-trash"></span>&nbsp;&nbsp;&nbsp;
 										</a>
 									</c:if>
 								</div>                                                                                    
 							</td>                                                                                        
-						</tr>                                                                                        
+						</tr>
+						<tr class="answer_area" id="answer_area${status.count}">
+							<td style="width:15%;background-color:#D1EEEE;border-bottom:3px dotted #fff"></td>
+							<td style="width:70%;">
+								<div  style="width:90%;margin-left:50px;background:#EAEAEA">
+									<div id="child_comments">
+									
+									</div>
+								</div>
+								<form action="" method="post">
+										<input name="comment_xh" id="comment_xh"  type="hidden" value="${comment.xh}"/>
+										<div style="margin-left:50px;">
+											<textarea id="comment_content"  name="comment_content" ></textarea>
+											<button id="btn_publish_comment" class="btn btn-primary btn-xs">立即回复</button>												
+										</div>
+								</form>
+							</td>
+							<td style="width:15%;background-color:#D1EEEE"></td>
+						</tr>                                                                                              
 					</table>                                                                                                  
 				</td>                                                                                                         
 			</tr>
@@ -294,7 +336,7 @@ $(function(){
        					<input id="is_store"  type="hidden" value="${is_store}"/>
        					
        					<div style="margin:20px;">
-       						<a id="pl">
+       						<a id="main_comment">
        							<textarea id="publish_content" name="publish_content" cols="100" rows="12">
        							</textarea>
        						</a>
@@ -312,6 +354,7 @@ $(function(){
 <script type="text/javascript">
 	$(function(){
 		submit();
+		submit_comment();
 	})
 		//==========================
 	function submit(){
@@ -342,6 +385,50 @@ $(function(){
 					}
 				})
 			}	
+		})
+	}
+	
+	function submit_comment(){
+		var username=$("#hidden_username").val().trim();
+		$("#btn_publish_comment").click(function(){
+			if(username==undefined || username=="null" || username==null){
+				layer.msg('您还没有登录,请先登录再发布信息!',{icon:7,time:1000,shade:0.4})
+			}else{
+				var comment_content=$("#comment_content").val();
+				var comment_xh=$("#comment_xh").val();
+				
+				console.log("comment_content:"+comment_content);
+				console.log("comment_xh:"+comment_xh);
+				if(comment_content ==""){
+					layer.msg('回复不能为空');
+					return;
+				}
+				
+				$.ajax({
+					type:'POST',
+					url:ctx+'bbs/republish',
+					data:{'comment_content':comment_content,'comment_xh':comment_xh,"action":'child_comment'},
+					dataType:'json',
+					success:function(data){
+						
+						$.ajax({
+							type:'GET',
+							url:ctx+'bbs/getChildComment',
+							data:{'comment_xh':comment_xh,"action":'child_comment'},
+							dataType:'json',
+							success:function(data){
+								var html="";
+								for(var i=0;i<data.data.length;i++){
+									html+="<div>"
+											+"<div>"+data.data[i].content+"</div>"
+										+"</div>"
+								}
+								$("#child_comments").html(html);
+							}
+						})
+					}
+				})
+			}
 		})
 	}
 	
@@ -434,7 +521,6 @@ $(function(){
 	function thumbUp2(){
 		alert("thumbUp2");
 	}
-
 	function printPage(){
 		pageSetUp_null();
 		console.log('dayin');
@@ -471,8 +557,41 @@ $(function(){
 		}catch(e){}
 		
 	}
+	function answer(index){
+		console.log(index);
+		$("#answer"+index).css('display','none');
+		$("#cancel_answer"+index).css('display','block');
+		$("#answer_area"+index).fadeIn();
+	}
 	
+	function cancel_answer(index){
+		console.log('cancel');
+		$("#cancel_answer"+index).css('display','none');
+		$("#answer"+index).css('display','block');
+		$("#answer_area"+index).fadeOut();
+	}
+	
+	function remove_comment(index){
+		$.ajax({
+			type:'POST',
+			url:ctx+'bbs/remove_comment',
+			data:{"comment_xh":index},
+			dataType:'json',
+			success:function(data){
+				window.location.reload();
+			}
+		})
+	}
+	
+	function juBao(){
+		window.open(ctx+'static/juBao','_blank','width=600,height=500,top=50px,left=100px')
+	}
 </script>	
+<script type="text/javascript">
+	$(function(){
+		//$(".answer_area").slideUp('fast');
+		
+	})
+</script>
 </html>
-
 

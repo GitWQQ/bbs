@@ -14,7 +14,7 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
                 	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd"
                     default-autowire="byName">
 	<!-- 加载配置文件properties里的属性 -->
-	<context:property-placeholder location="classpath:redis.properties" ignore-unresolvable="true"/>
+	<!-- <context:property-placeholder location="classpath:redis.properties" ignore-unresolvable="true"/> -->
 	
 	<!--连接池配置-->	
 	<bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">

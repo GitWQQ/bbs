@@ -19,6 +19,15 @@
         <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service" />
     </context:component-scan>
+    <!-- 配置登录拦截器 -->
+    <mvc:interceptors>
+    	<mvc:interceptor>
+    		<!-- <mvc:mapping path="/**"/>子标签可以定义需要进行拦截的请求路径 -->
+    		<mvc:mapping path="/**"/> 
+    		<!-- 指定拦截器的类 -->
+    		<bean class="org.ssm.dufy.util.LoginInterceptor"/>
+    	</mvc:interceptor>
+    </mvc:interceptors>
 
     <!-- 注解驱动 -->
     <mvc:annotation-driven />

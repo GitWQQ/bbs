@@ -13,12 +13,14 @@ xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.sprin
                     http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
                 	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd"
                     default-autowire="byName">
-
+	
+	
+	<context:property-placeholder location="classpath:*.properties" ignore-unresolvable="true"/>
+	
 	<import resource="classpath:spring-mysql.xml"/>
 	
 	<!-- spring自带定时器 -->
 	<task:annotation-driven/>
-	
 	
     <!-- 自动扫描 -->
    <context:component-scan base-package="org.ssm.dufy">

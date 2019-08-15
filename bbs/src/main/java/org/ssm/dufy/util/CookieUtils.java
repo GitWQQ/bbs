@@ -38,6 +38,7 @@ public class CookieUtils {
 				}
 			}
 		}
+		System.out.print("value:"+value);
 		return value;
 	}
 }

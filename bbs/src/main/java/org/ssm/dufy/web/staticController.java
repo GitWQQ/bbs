@@ -1,5 +1,6 @@
 package org.ssm.dufy.web;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,6 +42,7 @@ import org.ssm.dufy.service.UserService;
 import org.ssm.dufy.util.CookieUtils;
 import org.ssm.dufy.util.EncryptUtil;
 import org.ssm.dufy.util.PageUtil;
+import org.ssm.dufy.util.solr.SolrUtil;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo.Id;
 
@@ -87,7 +90,7 @@ public class staticController {
     @SuppressWarnings("unchecked")
 	@RequestMapping("/index")
     public String index(HttpServletRequest request,HttpServletResponse response,ModelMap modelMap){
-    	ssoLogin(request, response);
+    	//ssoLogin(request, response);
     	return "index";
     }
     
@@ -104,7 +107,6 @@ public class staticController {
     	if(paramMap.get("xh")!=null && !"".equals(paramMap.get("xh"))){
     		request.setAttribute("xh",paramMap.get("xh"));
     	}
-    	
     	int status=0;
     	if(user !=null){
     		//根据 likedUserId,likedPostId从缓存中获取是否点赞
@@ -184,6 +186,7 @@ public class staticController {
   	}
     
     public void ssoLogin(HttpServletRequest request,HttpServletResponse response){
+
     	Subject subject=SecurityUtils.getSubject();
     	String res_u=CookieUtils.getCookieValByKey("sso_cookie_U",request);
 		String res_p=CookieUtils.getCookieValByKey("sso_cookie_P",request);
@@ -192,6 +195,7 @@ public class staticController {
 			//解密
 			String sso_username=EncryptUtil.AESdecode(res_u,"666666");
 			String sso_password=EncryptUtil.AESdecode(res_p,"666666");
+			System.out.print("sso_username:"+sso_username);
 			//
 			//沒有登陸
 			UsernamePasswordToken token=new UsernamePasswordToken(sso_username, sso_password);
@@ -233,6 +237,15 @@ public class staticController {
     @RequestMapping("/toLoginPage")
     public String toLoginPage(){
     	return "login";
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    @RequestMapping("/toTipOffsPage")
+    public String toTipOffsPage(){
+    	return "tipOffs";
     }
     /**
      * 权限验证失败跳转的页面，
@@ -284,19 +297,33 @@ public class staticController {
     public String tofile_manager_json(){
     	return "file_manager_json";
     }
+    
+    @RequestMapping("/juBao")
+    public String toJuBaoPage(){
+    	return  "jubao";
+    }
 
     
 
 	/**
 	 * 
 	 * @return
+	 * @throws UnsupportedEncodingException 
 	 */
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/pagingCount",method=RequestMethod.GET)
 	@ResponseBody
-	public Map<String,Object> getPageCount(HttpServletRequest request,HttpServletResponse response){
+	public Map<String,Object> getPageCount(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException{
 		log.info("=====pagingCount======");
 		Map<String,Object> map=new HashMap<>();
-	    Integer count=bbsService.queryBbsCount();
+		Map<String,Object> paramMap=new HashMap<>();
+		String search_content=null;
+		if(request.getParameter("search_content")!=null){
+			search_content=new String((request.getParameter("search_content")).getBytes("iso-8859-1"),"utf-8");
+			paramMap.put("search_content", search_content);
+			paramMap.put("action",request.getParameter("action"));
+		}
+	    Integer count=bbsService.queryBbsCount(paramMap);
 	    PageUtil page=new PageUtil();
 	    page.setCount(count);
 	    map.put("page", page);
@@ -308,7 +335,7 @@ public class staticController {
 	@RequestMapping(value="/getPagingBbs",method=RequestMethod.GET)
 	@ResponseBody
 	public List getPagingBbs(HttpServletRequest request,HttpServletResponse response
-			){
+			) throws SolrServerException, UnsupportedEncodingException{
 		Map<String,Object> paramMap=getParamMap(request.getParameterMap());
 		PageUtil pageUtil=new PageUtil();
 		Integer curr=Integer.parseInt(paramMap.get("curr").toString());
@@ -318,9 +345,15 @@ public class staticController {
 		//list=redisTemplate.opsForList().range("getPagingBbs",(curr-1)*limit,curr*limit-1);
 		//if(list.isEmpty()){
 			//从数据库中获取数据，并将数据放到缓存中
+			if("search".equals(paramMap.get("action"))){
+				String search_content=new String((request.getParameter("search_content")).getBytes("iso-8859-1"),"utf-8"); 
+				list=SolrUtil.search(search_content,0,10,"","");
+			}else{
+			//System.out.println("list:"+list);
 			list=bbsService.queryPagingBbs(paramMap);
 			//redisTemplate.opsForList().rightPushAll("getPagingBbs",list);
 			//redisTemplate.expire("getPagingBbs",60*60*2,TimeUnit.SECONDS);
+			}
 		//}
 		return list;
 	}

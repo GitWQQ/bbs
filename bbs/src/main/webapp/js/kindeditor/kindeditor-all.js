@@ -311,7 +311,9 @@ K.options = {
 		'br,tbody,tr,strong,b,sub,sup,em,i,u,strike,s,del' : ['id', 'class'],
 		iframe : ['id', 'class', 'src', 'frameborder', 'width', 'height', '.width', '.height']
 	},
-	layout : '<div class="container"><div class="toolbar"></div><div class="edit"></div><div class="statusbar"></div></div>'
+	layout : '<div class="container"><div class="toolbar"></div><div class="edit"></div></div>'
+	//layout : '<div class="container"><div class="toolbar"></div><div class="edit"></div><div class="statusbar"></div></div>'
+	//layout : '<div class="container"><div class="edit"></div><div class="statusbar"></div><div class="toolbar"></div></div>'
 };
 
 

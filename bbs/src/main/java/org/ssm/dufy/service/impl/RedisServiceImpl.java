@@ -159,10 +159,13 @@ public class RedisServiceImpl implements RedisService {
 
 	@Override
 	public Object getUserLikeByLikeUserIdAndLikePostId(String likedUserId, String likedPostId) {
+		System.err.println("likedUserId:"+likedUserId);
+		System.err.println("likePostId:"+likedPostId);
 		String key=RedisKeyUtils.getLikedKey(likedUserId, likedPostId);
 		Boolean existsKey=redisTemplate.opsForHash().hasKey(RedisKeyUtils.MAP_KEY_USER_LIKED,key);
 		Object obj=null;
-		if(existsKey){
+		System.out.println(existsKey);
+		if(existsKey!=null){
 			obj=redisTemplate.opsForHash().get(RedisKeyUtils.MAP_KEY_USER_LIKED,key);
 		}
 		return obj;

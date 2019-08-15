@@ -60,7 +60,8 @@ $(function(){
         	    var password=body.find('#password').val();
         	     $.ajax({
         	    	type:'POST',
-        			url:ctx+'sys/doLogin',
+        			//url:ctx+'sys/doLogin',
+        			url:ctx+'sys/ssoDoLogin',
         			data:{"username":username,"password":password,"rememberMe":rememberMe},
         			dataType:'json',
         			success:function(data){

@@ -36,8 +36,8 @@ public class BbsServiceImpl implements BbsService{
 		
 		Subject subject=SecurityUtils.getSubject();
 		User user=(User)subject.getPrincipal();
-		
 		String xh=CommonUtils.getXh();
+		
 		if("add".equals(paramMap.get("action"))){
 			//新增bbs
 			//产生新的xh
@@ -83,6 +83,21 @@ public class BbsServiceImpl implements BbsService{
 				aboutDao.updatePublishNUM(aboutMap);
 			}
 			
+		}else if("child_comment".equals(paramMap.get("action"))){
+			//子跟帖（评论）
+			if(xh !=null && !"".equals(xh))
+			paramMap.put("xh",xh);
+			paramMap.put("author_id",user.getId());
+			paramMap.put("image_url","");
+			paramMap.put("created",CommonUtils.getGxsjc());
+			paramMap.put("is_parent","3");
+			paramMap.put("parent_xh",paramMap.get("comment_xh"));
+			paramMap.put("comment_time",CommonUtils.getGxsjc());
+			paramMap.put("thumbs_up",0);
+			paramMap.put("about_xh",user.getAbout_xh());
+			paramMap.put("content",paramMap.get("comment_content"));
+			paramMap.put("yxx","1");
+			bbsDao.addBBSContent(paramMap);
 		}
 		
 	}
@@ -118,8 +133,12 @@ public class BbsServiceImpl implements BbsService{
 	}
 
 	@Override
-	public Integer queryBbsCount() {
-		Map<String,Object> paramMap=new HashMap<>();
+	public Integer queryBbsCount(Map<String, Object> paramMap) {
+		//solr搜索
+		System.out.println("like_title:"+paramMap.get("search_content"));
+		if("search".equals(paramMap.get("action"))){
+			paramMap.put("like_title",paramMap.get("search_content"));
+		}
 		paramMap.put("is_parent","1");
 		paramMap.put("yxx","1");
 		return bbsDao.queryBbsCount(paramMap);
@@ -177,7 +196,16 @@ public class BbsServiceImpl implements BbsService{
 	@SuppressWarnings("rawtypes")
 	@Override
 	public List getBbbsByParam(Map paramMap) {
-		return bbsDao.queryContentByParam(paramMap);
+		
+		if("child_comment".equals(paramMap.get("action"))){
+			Map<String,Object> param=new HashMap<>();
+			param.put("is_parent","3");
+			param.put("parent_xh",paramMap.get("comment_xh"));
+			param.put("yxx","1");
+			return bbsDao.queryContentByParam(param);
+		}else{
+			return bbsDao.queryContentByParam(paramMap);
+		}
 	}
 
 	@Override
@@ -243,5 +271,17 @@ public class BbsServiceImpl implements BbsService{
 	@Override
 	public void updateByParam(bbs bbs) {
 
+	}
+
+	@Override
+	public void removeComment(Map paramMap) {
+		Map<String,Object> param=new HashMap<>();
+		System.err.println("comment_xh:"+paramMap.get("comment_xh"));
+		if(paramMap.get("comment_xh")!=null){
+			param.put("xh",paramMap.get("comment_xh"));
+			param.put("yxx","1");
+			param.put("is_parent","2");
+			bbsDao.removeBbsContent(param);
+		}
 	}
 }

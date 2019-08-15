@@ -18,6 +18,7 @@
     <script type="text/javascript" src="js/layui/layui.all.js"></script>
     <script type="text/javascript" src="js/layui/lay/modules/upload.js"></script>
     <script type="text/javascript" src="js/own/index.js"></script>
+    <script type="text/javascript" src="js/own/detail.js"></script>
     <script type="text/javascript" src="js/layui/lay/modules/form.js"></script>
    <!--  <script type="text/javascript" src="js/jquery-qrcode.min.js"></script> -->
     

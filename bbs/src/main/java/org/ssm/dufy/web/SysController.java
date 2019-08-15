@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Random;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -27,6 +29,9 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -36,6 +41,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.ssm.dufy.entity.User;
 import org.ssm.dufy.util.CookieUtils;
 import org.ssm.dufy.util.EncryptUtil;
+import org.ssm.dufy.util.JsonUtil;
 import org.ssm.dufy.util.SessionUtil;
 
 
@@ -43,10 +49,17 @@ import org.ssm.dufy.util.SessionUtil;
 @RequestMapping("/sys")
 public class SysController {
 	
-	
-	
 	private static final Logger log=LoggerFactory.getLogger(SysController.class);
  
+	@SuppressWarnings("rawtypes")
+	@Autowired
+	private RedisTemplate redisTemplate;
+	
+	@Value(value="${SESSION_EXPIRE}")
+	private String SESSION_EXPIRE;
+	
+	@Value(value="${TOKEN_KEY}")
+	private String TOKEN_KEY;
 	
 	/**
 	 * 登录
@@ -62,6 +75,8 @@ public class SysController {
 		Map<String,Object> result=new HashMap<>();
 		String username=paramMap.get("username").toString();
 		String password=paramMap.get("password").toString();
+		System.out.print("sysController--:"+username);
+		System.out.print("password--:"+password);
 		boolean rememberMe=Boolean.parseBoolean(paramMap.get("rememberMe").toString());
 		Subject subject=SecurityUtils.getSubject();
 		if(!subject.isAuthenticated()){//没有登录
@@ -105,6 +120,8 @@ public class SysController {
 		}
 		return result;
 	}
+	
+	
 	
 	/**
 	 * 登出
@@ -289,4 +306,74 @@ public class SysController {
 	public static void main(String[] args) {
 		System.out.println(2097152/1024/1024);
 	}
+	
+	///////////////////////////////////////////////////////////////////////
+	
+	/**
+	 * 登录
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@RequestMapping("/ssoDoLogin")
+	@ResponseBody
+	public Map<String,Object> ssoDoLogin(HttpServletRequest request,HttpServletResponse response){
+		Map<String,Object> paramMap=getParamMap(request.getParameterMap());
+		Map<String,Object> result=new HashMap<>();
+		String username=paramMap.get("username").toString();
+		String password=paramMap.get("password").toString();
+		System.out.print("sysController--:"+username);
+		System.out.print("password--:"+password);
+		boolean rememberMe=Boolean.parseBoolean(paramMap.get("rememberMe").toString());
+		Subject subject=SecurityUtils.getSubject();
+		
+		if(!subject.isAuthenticated()){//没有登录
+			try{
+				UsernamePasswordToken token=new UsernamePasswordToken(username, password);
+				token.setRememberMe(rememberMe);
+				subject.login(token);
+				//获取当前登录用户信息
+				User currentUser=(User)subject.getPrincipal();
+				//登录成功了
+				//随机生成一个uuid作为token
+				String cookie_token=UUID.randomUUID().toString();
+				//currentUser.setPassword(null);
+				//把
+				redisTemplate.opsForValue().set("SESSION:"+cookie_token,JsonUtil.objectToJson(currentUser));
+				redisTemplate.expire("SESSION:"+cookie_token,30,TimeUnit.MINUTES);
+				CookieUtils.createCookie("token",cookie_token, request,response);
+				//存session
+				subject.getSession().setAttribute("user",currentUser);
+				subject.getSession().setAttribute("username",currentUser.getUsername());
+				subject.getSession().setTimeout(30*60*1000);
+				
+				log.info("用户【"+username+"】登录成功");
+				result.put("status",200);
+			}catch(UnknownAccountException uae){
+				log.info("用户【"+username+"】不存在");
+				result.put("status",201);
+				result.put("message","用户不存在,");
+			}catch(IncorrectCredentialsException ice){
+				log.info("用户【"+username+"】密码不正确");
+				result.put("status",202);
+				result.put("message","密码不正确,");
+			}catch(LockedAccountException lae){
+				log.info("用户【"+username+"】账号被锁定");
+				result.put("status",203);
+				result.put("message","账号被锁定");
+			}catch(ExcessiveAttemptsException eae){
+				log.error("密码尝试限制");
+				result.put("status",204);
+				result.put("message","密码尝试限制");
+			}
+			
+		}else{
+			result.put("message","当前已有用户登录,如要登录请先退出后 再进行登录");
+		}
+		return result;
+	}
+	
+	
+	
 }

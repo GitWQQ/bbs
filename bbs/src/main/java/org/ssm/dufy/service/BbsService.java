@@ -21,7 +21,7 @@ public interface BbsService {
 	 * 查询发布所有的bbs的数量
 	 * @return
 	 */
-	public Integer queryBbsCount();
+	public Integer queryBbsCount(Map<String,Object> paramMap);
 	
 	/**
 	 * 分页查询
@@ -59,6 +59,8 @@ public interface BbsService {
 	
 	public void removeStoreBbs(Map paramMap);
 	
+	
+	public void removeComment(Map paramMap);
 	
 	/**
 	 * 根据条件查询被收藏的bbs

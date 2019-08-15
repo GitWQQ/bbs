@@ -78,7 +78,7 @@ public class BbsController {
 		result.put("msg","跟帖成功!您的账户将增加3积分");
 		return result;
 	}
-	
+		
 	
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value="/modifyPublish",method=RequestMethod.POST)
@@ -276,6 +276,18 @@ public class BbsController {
 		return result;
 	}
 	
+	
+	@RequestMapping(value="/remove_comment",method=RequestMethod.POST)
+	@ResponseBody
+	public Map<String,String> remove_comment(HttpServletRequest request,HttpServletResponse response){
+		Map<String,Object> paramMap=getParamMap(request.getParameterMap());
+		System.out.println("comment_xh:"+paramMap.get("comment_xh"));
+		Map<String,String> result=new HashMap<>();
+		bbsService.removeComment(paramMap);
+		result.put("msg","撤销收藏成功");
+		return result;
+	}
+	
 	/**
 	 * 点赞操作
 	 * @param request
@@ -303,6 +315,24 @@ public class BbsController {
 			result.put("count",count);
 		}
 		
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value="/getChildComment",method=RequestMethod.GET)
+	@ResponseBody
+	public Map<String,Object> getChildComment(HttpServletRequest request,HttpServletResponse response){
+		Map<String,Object> paramMap=getParamMap(request.getParameterMap());
+		Map<String,Object> result=new HashMap<String,Object>();
+		List list=bbsService.getBbbsByParam(paramMap);
+		System.out.println("list:="+list);
+		result.put("data",list);
+		System.out.println(result);
 		return result;
 	}
 	

@@ -43,6 +43,9 @@
   		<if test="title !=null">
   			AND title=#{title,jdbcType=VARCHAR}
   		</if>
+  		<if test="like_title !=null">
+  			AND title like CONCAT('%',#{like_title,jdbcType=VARCHAR},'%')
+  		</if>
   		<if test="content !=null">
   			AND content=#{content,jdbcType=VARCHAR}
   		</if>
@@ -191,7 +194,11 @@
   	
   	<delete id="removeBbsContent" parameterType="java.util.Map">
   		DELETE FROM TB_BBS 
-  		WHERE xh=#{xh,jdbcType=VARCHAR}
+  		<where>
+  			1=1
+  			<include refid="queryByParam"/>
+  		</where>
+  		<!-- WHERE xh=#{xh,jdbcType=VARCHAR} -->
   	</delete>
   
   	<select id="queryBbsCount" parameterType="java.util.Map" resultType="int">
