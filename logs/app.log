@@ -1,0 +1,8 @@
+2019-07-24 11:38:52  [ main:1 ] - [ WARN ]  Tried to assign property username:java.lang.String to bean of class java.lang.Object
+2019-07-24 11:39:13  [ main:0 ] - [ WARN ]  Tried to assign property username:java.lang.String to bean of class java.lang.Object
+2019-07-24 11:40:28  [ main:0 ] - [ WARN ]  Tried to assign property username:java.lang.String to bean of class java.lang.Object
+2019-07-24 11:42:28  [ main:0 ] - [ WARN ]  Tried to assign property about_xh:java.lang.String to bean of class java.lang.Object
+2019-07-24 11:42:56  [ main:0 ] - [ WARN ]  Tried to assign property about_xh:java.lang.String to bean of class java.lang.Object
+2019-07-24 11:43:23  [ main:0 ] - [ WARN ]  Tried to assign property about_xh:java.lang.String to bean of class java.lang.Object
+2019-07-24 11:44:05  [ main:0 ] - [ WARN ]  Tried to assign property about_xh:java.lang.String to bean of class java.lang.Object
+2019-07-24 11:45:14  [ main:0 ] - [ WARN ]  Tried to assign property about_xh:java.lang.String to bean of class java.lang.Object
