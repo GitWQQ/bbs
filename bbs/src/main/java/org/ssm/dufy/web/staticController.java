@@ -316,7 +316,7 @@ public class staticController {
 	public Map<String,Object> getPageCount(HttpServletRequest request,HttpServletResponse response) throws UnsupportedEncodingException{
 		log.info("=====pagingCount======");
 		Map<String,Object> map=new HashMap<>();
-		Map<String,Object> paramMap=new HashMap<>();
+		Map<String,Object> paramMap=getParamMap(request.getParameterMap());
 		String search_content=null;
 		if(request.getParameter("search_content")!=null){
 			search_content=new String((request.getParameter("search_content")).getBytes("iso-8859-1"),"utf-8");

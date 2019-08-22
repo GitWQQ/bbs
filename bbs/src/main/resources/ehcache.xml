@@ -2,7 +2,9 @@
 <ehcache xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:noNamespaceSchemaLocation="http://ehcache.org/ehcache.xsd">
     <!-- 磁盘缓存位置 -->
-    <diskStore path="java.io.tmpdir" />
+   <!--  <diskStore path="java.io.tmpdir" /> -->
+    <diskStore path="C:/ehcache"/>
+    
     <!-- 
     	name:缓存的名称
     	maxElementInMemory:缓存最大个数
@@ -42,5 +44,18 @@
          timeToLiveSeconds="5"
          overflowToDisk="false"
          memoryStoreEvictionPolicy="LRU"/>
+    
+    <cache 
+    	name="bbsCache"     
+    	maxElementsInMemory="10000"
+    	eternal="false"
+    	timeToIdleSeconds="120"
+    	timeToLiveSeconds="120"
+    	overflowToDisk="true"
+    	maxElementsOnDisk="10000000"
+    	diskPersistent="false"
+    	diskExpiryThreadIntervalSeconds="120"
+    	memoryStoreEvictionPolicy="LRU"
+    />
          
 </ehcache>

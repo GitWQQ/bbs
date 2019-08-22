@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="org.ssm.dufy.dao.BbsDao" >
-
-    <resultMap  type="bbs" id="bbsMap">
+	
+    <resultMap  type="bbs" id="bbsMap" >
         <id column="XH" jdbcType="VARCHAR" property="xh"/>
         <result column="TITLE" jdbcType="VARCHAR"  property="title"/>
         <result column="CONTENT" jdbcType="VARCHAR" property="content" />
@@ -175,6 +175,8 @@
   		LIMIT #{startlimit,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
   	</select>
   	
+  	
+  	
   	<!-- ============================== -->
   	<select id="queryCommentByParam" parameterType="java.util.Map" resultMap="bbsMap">
   		SELECT <include refid="columns"/> FROM TB_BBS
@@ -186,7 +188,7 @@
   	
   	
   	<select id="getUser" resultType="User" parameterType="int">
-  		SELECT  username FROM TB_USER WHERE ID=#{author_id}
+  		SELECT  username,created FROM TB_USER WHERE ID=#{author_id}
   	</select>
   	<select id="getAbout" resultType="About" parameterType="string">
   		SELECT xh,jf,start,published_num FROM TB_ABOUT WHERE xh=#{about_xh}
@@ -198,7 +200,6 @@
   			1=1
   			<include refid="queryByParam"/>
   		</where>
-  		<!-- WHERE xh=#{xh,jdbcType=VARCHAR} -->
   	</delete>
   
   	<select id="queryBbsCount" parameterType="java.util.Map" resultType="int">
@@ -207,6 +208,45 @@
   			<include refid="queryByParam"/>
   		</where>
   	</select>
+  	
+  	<select id="queryNewBbsCount" parameterType="java.util.Map" resultType="int">
+  		SELECT
+			COUNT(*)
+		FROM
+		TB_BBS bbs,
+		TB_USER u
+		WHERE
+			bbs.author_id = u.id
+			and bbs.yxx=1
+			and bbs.is_parent=1
+			AND DATEDIFF(NOW(),u.created) &lt;50
+  	</select>
+  	
+  	<select id="queryNewPagingContentByParam" parameterType="java.util.Map" resultMap="bbsMap">
+  		SELECT 
+  			bbs.XH,
+       		bbs.TITLE,
+       		bbs.CONTENT,
+       		bbs.CREATED,
+       		bbs.YXX,
+       		bbs.AUTHOR_ID,
+       		bbs.IMAGE_URL,
+       		bbs.IS_PARENT,
+       		bbs.THUMBS_UP,
+       		bbs.ABOUT_XH,
+       		bbs.PARENT_XH,
+       		bbs.COMMENT_TIME 
+  		FROM TB_BBS bbs,
+  		TB_USER u 
+  		WHERE
+  			bbs.author_id = u.id
+  			and bbs.yxx=1
+  			and bbs.is_parent=1
+  			AND DATEDIFF(NOW(),u.created) &lt;50
+  		ORDER BY bbs.CREATED DESC 
+  		LIMIT #{startlimit,jdbcType=INTEGER},#{limit,jdbcType=INTEGER}
+  	</select>
+  	
   	
   	<select id="queryOwnBbsCount" resultType="int">
   		SELECT COUNT(*) FROM TB_BBS

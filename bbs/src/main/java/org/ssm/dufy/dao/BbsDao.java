@@ -18,9 +18,13 @@ public interface BbsDao {
     
     public List queryPagingContentByParam(Map paramMap);
     
+    public List queryNewPagingContentByParam(Map paramMap);
+    
     public void removeBbsContent(Map paramMap);
     
     public Integer queryBbsCount(Map paramMap);
+    
+    public Integer queryNewBbsCount(Map paramMap);
     
     public Integer queryOwnBbsCount(Map paramMap);
     

@@ -20,8 +20,9 @@
     <script type="text/javascript" src="js/own/index.js"></script>
     <script type="text/javascript" src="js/own/detail.js"></script>
     <script type="text/javascript" src="js/layui/lay/modules/form.js"></script>
-   <!--  <script type="text/javascript" src="js/jquery-qrcode.min.js"></script> -->
-    
+   	<script type="text/javascript" src="js/echarts/echarts.min.js"></script>
+   	<script type="text/javascript" src="js/echarts/esl.js"></script>
+    <!-- ======================================================================== -->
 	<link type="text/css" href="js/easyui1.6/themes/default/easyui.css" rel="stylesheet"></script>
 	<link type="text/css" href="js/bootstrap-3.3.7/css/bootstrap.min.css" rel="stylesheet"></script>
 	<link type="text/css" href="js/easyui1.6/themes/icon.css" rel="stylesheet"></script>

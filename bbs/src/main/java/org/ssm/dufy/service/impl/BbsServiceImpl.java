@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.ssm.dufy.dao.AboutDao;
 import org.ssm.dufy.dao.BbsDao;
@@ -102,6 +103,7 @@ public class BbsServiceImpl implements BbsService{
 		
 	}
 
+	/*@Cacheable(value="bbsCache",key="method.name")*/
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public List getContentByParam(Map paramMap) {
@@ -135,18 +137,25 @@ public class BbsServiceImpl implements BbsService{
 	@Override
 	public Integer queryBbsCount(Map<String, Object> paramMap) {
 		//solr搜索
-		System.out.println("like_title:"+paramMap.get("search_content"));
+		Object action=paramMap.get("action");
+		System.out.println("action:="+action);
+		
 		if("search".equals(paramMap.get("action"))){
 			paramMap.put("like_title",paramMap.get("search_content"));
 		}
 		paramMap.put("is_parent","1");
 		paramMap.put("yxx","1");
+		
+		if(action!=null && !"".equals(action) && "new".equals(action)){
+			return bbsDao.queryNewBbsCount(paramMap);
+		}
 		return bbsDao.queryBbsCount(paramMap);
 	}
 	
 	/**
 	 * 分页查询
 	 */
+	
 	@SuppressWarnings({ "unchecked", "unused", "rawtypes" })
 	@Override
 	public List queryPagingBbs(Map paramMap) {
@@ -170,14 +179,15 @@ public class BbsServiceImpl implements BbsService{
 			paramMap.put("limit",limit);
 			paramMap.put("yxx","1");
 			paramMap.put("is_parent","1");
-			list=bbsDao.queryPagingContentByParam(paramMap);
-			for (bbs bs : list) {
-				String created=bs.getCreated().substring(0,bs.getCreated().length()-10);
-				bs.setCreated(created);
-			}
 			
+			if("new".equals(paramMap.get("action"))){
+				list=bbsDao.queryNewPagingContentByParam(paramMap);
+			}else{
+				list=bbsDao.queryPagingContentByParam(paramMap);
+			}
 		}
 		return list;
+		
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })

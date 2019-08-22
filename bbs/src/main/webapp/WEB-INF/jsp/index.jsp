@@ -15,6 +15,11 @@
 	<title>如意论坛</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
 	<%@include file="../common/script_style.jsp" %>
+	<style type="text/css">
+		body{
+			background-color:#FCFCFC;
+		}
+	</style>
 </head>
 <script type="text/javascript">
 var ctx="<%=basepath%>";
@@ -24,7 +29,7 @@ $(function(){
 </script>
 
 
-<body style="background-color:#FCFCFC">
+<body>
 	<div>
 		<jsp:include page="../common/navbar.jsp"/>
 	</div>
@@ -62,10 +67,16 @@ $(function(){
 </script>
 <script type="text/javascript">
 	$(function(){
+		showInfo();
+	})
+
+	function showInfo(action){
+		
 		$.ajax({
 			type:'GET',
 			url:ctx+'static/pagingCount',
 			dataType:'json',
+			data:{"action":action},
 			success:function(data){
 				var count=data.page.count;
 				var limit=data.page.limit;
@@ -86,7 +97,7 @@ $(function(){
 							$.ajax({
 								type:'GET',
 								url:ctx+'static/getPagingBbs',
-								data:{"count":count,"curr":obj.curr,"limit":limit,"own":'0'},
+								data:{"count":count,"curr":obj.curr,"limit":limit,"own":'0',"action":action},
 								success:function(data){
 									var bbs_table=$("#bbs_table");
 									
@@ -99,11 +110,11 @@ $(function(){
 													+'<td style="width:25%">'
 														+'<table align="center">'
 															+'<tr>'
-																+'<td><strong><a href="javascript:void(0);">最新</a></strong></td>'
-																+'<td style="padding-left:10px;"><strong><a href="javascript:void(0);">新人贴</a></strong></td>'
+																+'<td><strong><a href="javascript:void(0);" onclick="window.location.reload();">首页</a></strong></td>'
+																+'<td style="padding-left:10px;"><strong><a href="javascript:void(0);" onclick="newUser();">新人贴</a></strong></td>'
 																+'<td style="padding-left:10px;"><strong><a href="javascript:void(0);">热贴</a></strong></td>'
-																+'<td style="padding-left:10px;"><strong><a href="javascript:void(0);">精华</a></strong></td>'
-																+'<td style="padding-left:10px;"><strong><a href="javascript:void(0);">更多</a></strong></td>'
+																+'<td style="padding-left:10px;"><strong><a href="static/publish" >添加随笔</a></strong></td>'
+																+'<td style="padding-left:10px;"><strong><a href="javascript:void(0);" onclick="set()">设置</a></strong></td>'
 															+'</tr>'
 														+'</table>'
 													+'</td>'
@@ -114,6 +125,7 @@ $(function(){
 															+'<tr>'
 																+'<td><strong>作者</strong></td>'
 																+'<td style="padding-left:20px;"><strong>发布时间</strong></td>'
+																+'<td style="padding-left:20px;"><strong>阅读/回复</strong></td>'
 															+'</tr>'
 														+'</table>'
 		       	 									+'</td>'
@@ -139,8 +151,11 @@ $(function(){
 																		  	+'<span>'
 																		  		+'<a href="javascript:void(0);">'
 																		  			+'<div id="toPl" onclick="detail('+i+')" style="padding-bottom:40px;padding-top:20px;" >' 
-																						+'<div style="word-wrap:break-word;padding:0px;float:left;height:100%">'+'<strong>'+data[i].title+'</strong></div>'
-																							if(data[i].about.published_num<5){
+																						+'<div style="word-wrap:break-word;padding:0px;float:left;height:100%">'
+																							+'<strong>'+data[i].title+'</strong>'
+																						+'</div>'
+																						  var days=parseInt((new Date().getTime()-new Date(data[i].user.created).getTime())/(1000*60*60*24));
+																							if(days<50){
 																								html+='<div style="float:left;margin-left:8px;background-color:red;color:#fff;padding:3px 8px;font-size:11px;border-radius:5px;">'
 																									 	+'新人贴'
 																							 	 	+'</div>'	
@@ -155,7 +170,8 @@ $(function(){
 																+'<td style="width:25%;border-bottom:3px dotted #DBDBDB;font-size:12px;">'
 																	+'<div style="width:100%;text-align:center;">'
 																		+'<a>'+data[i].user.username+'</a>'
-																		+'<a style="padding-left:20px;">'+data[i].created+'</a>'
+																		+'<a style="padding-left:20px;">'+data[i].created.substring(0,11)+'</a>'
+																		+'<a style="padding-left:20px;">20|3</a>'
 																	+'</div>'                                                                                      
 																+'</td>'                                                                                        
 															+'</tr>'                                                                                         
@@ -179,10 +195,10 @@ $(function(){
 				//=============
 			}
 		})
-	})
-
+	}
+	
+	
 	function detail(index){
-		
         var xh=$("#bbsXh"+index).val();
         window.open(ctx+'static/detail?xh='+xh ,'_blank');
     }
@@ -318,7 +334,7 @@ $(function(){
 																+'<td style="width:25%;border-bottom:3px dotted #DBDBDB;font-size:12px;">'
 																	+'<div style="width:100%;text-align:center;">'
 																		+'<a>'+data[i].username+'</a>'
-																		+'<a style="padding-left:20px;">'+data[i].created+'</a>'
+																		+'<a style="padding-left:20px;">'+data[i].created.substring(0,19)+'</a>'
 																	+'</div>'                                                                                   
 																+'</td>'                                                                                        
 															+'</tr>'                                                                                         
@@ -348,6 +364,12 @@ $(function(){
 		})
 	})
 
+	function newUser(){
+		showInfo("new");
+	}
+	function set(){
+		alert("设置");
+	}
 </script>
 </html>	
 
