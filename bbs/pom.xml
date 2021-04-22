@@ -29,7 +29,7 @@
 		<slf4j.version>1.7.7</slf4j.version>  
         <log4j.version>1.2.17</log4j.version>
         <logback.version>1.1.7</logback.version>  
-        <shiro.version>1.2.3</shiro.version>
+        <shiro.version>1.7.1</shiro.version>
         <!-- mongodb -->
         <mongodb.java.driver>3.2.2</mongodb.java.driver>
         <spring.data.mongodb>1.9.2.RELEASE</spring.data.mongodb>
