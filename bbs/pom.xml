@@ -32,7 +32,7 @@
         <shiro.version>1.2.3</shiro.version>
         <!-- mongodb -->
         <mongodb.java.driver>3.2.2</mongodb.java.driver>
-        <spring.data.mongodb>1.9.2.RELEASE</spring.data.mongodb>
+        <spring.data.mongodb>3.3.5</spring.data.mongodb>
         <mail.version>1.4.7</mail.version>  
         <activation.version>1.1</activation.version>
 	</properties>
